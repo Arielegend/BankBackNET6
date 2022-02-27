@@ -2,5 +2,6 @@
 {
     public class DepositResponse :ReturnResponse
     {
+        public int Amount { get; set; }
     }
 }

@@ -22,7 +22,6 @@ namespace BackBetha.Controllers
             _sendingRecorderService = sendingRecorderService;
         }
 
-
         [HttpPost("Deposit")]
         public async Task<DepositResponse> Deposit([FromBody] DepositRequest request)
         {
@@ -31,8 +30,10 @@ namespace BackBetha.Controllers
             
             if (await _sendingRecorderService.AddRecordOfDepositRequestByUser(request.RequestingClientThread))
             {
-                await HandleDeposit(request);
+                var amount = await _clientService.HandleDeposit(request); 
                 response.ReturnStatus = ReturnStatuses.Success;
+                response.Amount = amount;
+
             }
             else
             {
@@ -40,23 +41,18 @@ namespace BackBetha.Controllers
             }
                
             return response;
-
-        }
-
-        private async Task HandleDeposit(DepositRequest request)
-        {
-            await _clientService.HandleDeposit(request);
-            _ = Task.CompletedTask;
         }
 
         [HttpPost("SetNumberOfClients")]
         public async Task<SetNumberOfClientsResponse> SetNumberOfClients([FromBody] SetNumberOfClientsRequest request)
         {
-            //Console.WriteLine("arrived - > " + request.NumberOfClients.ToString());
             _numOfAccounts = request.NumberOfClients;
-
             await _clientService.InitialClients(_numOfAccounts);
-            var response = new SetNumberOfClientsResponse() { ReturnStatus = ReturnStatuses.Success, TotalCount = _numOfAccounts };
+            
+            var response = new SetNumberOfClientsResponse() { 
+                ReturnStatus = ReturnStatuses.Success, 
+                TotalCount = _numOfAccounts
+            };
             return response;
         }
 
@@ -68,17 +64,9 @@ namespace BackBetha.Controllers
             return clients;
         }
 
-        [HttpPost]
-        public async Task<Client> AddClient([FromBody] Client c)
-        {
-            await _clientService.AddSingleClient(c);
-            return c;
-        }
-
         [HttpGet("IsAllive")]
         public async Task<IsAlliveResponse> IsAllive()
         {
-
             var response = new IsAlliveResponse() { ReturnStatus = ReturnStatuses.Allive };
             return response;
         }

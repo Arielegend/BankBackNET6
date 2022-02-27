@@ -8,6 +8,6 @@ namespace BackBetha.Services
         public Task<bool> AddSingleClient(Client c);
         public List<Client> GetClients();
         public Task InitialClients(int numberOfClients);
-        public Task HandleDeposit(DepositRequest depositRequest);
+        public Task<int> HandleDeposit(DepositRequest depositRequest);
     }
 }

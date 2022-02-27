@@ -48,7 +48,6 @@ namespace BackBetha.Services
         }
         private async Task EmptyClientsTable()
         {
-
             var clients = GetClients();
             foreach (var client in clients)
             {
@@ -68,13 +67,15 @@ namespace BackBetha.Services
             return true;
         }
 
-        public async Task HandleDeposit(DepositRequest depositRequest)
+        public async Task<int> HandleDeposit(DepositRequest depositRequest)
         {
             try
             {
                 var client = _dataContext.Clients.Find(depositRequest.ClientId);
-                client.Amount += depositRequest.Amount;
+                var newAmount = client.Amount + depositRequest.Amount;
+                client.Amount = newAmount;
                 await _dataContext.SaveChangesAsync();
+                return newAmount;
 
             }
             catch (Exception ex)
