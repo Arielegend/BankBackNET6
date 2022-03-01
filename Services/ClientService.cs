@@ -81,6 +81,7 @@ namespace BackBetha.Services
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+                return -1;
             }
 
         }
